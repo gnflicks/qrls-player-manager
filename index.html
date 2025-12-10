@@ -218,6 +218,12 @@
       color: var(--text-muted);
     }
 
+    .team-row-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
     .team-bar {
       display: flex;
       flex-wrap: wrap;
@@ -270,6 +276,28 @@
       background: rgba(255,255,255,0.06);
       border-style: solid;
       color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .team-delete {
+      background: none;
+      border-radius: 999px;
+      border: 1px solid rgba(255,107,129,0.7);
+      color: rgba(255,180,190,0.95);
+      padding: 0.15rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .team-delete:hover {
+      background: rgba(255,107,129,0.12);
+      border-color: rgba(255,107,129,0.95);
+      color: #ffeef0;
       transform: translateY(-1px);
     }
 
@@ -436,7 +464,10 @@
         <div class="team-row">
           <div class="team-row-header">
             <span class="team-row-label">Draft boards</span>
-            <button class="team-add" id="addTeamBtn" type="button">+ New</button>
+            <div class="team-row-actions">
+              <button class="team-add" id="addTeamBtn" type="button">+ New</button>
+              <button class="team-delete" id="deleteTeamBtn" type="button">Delete</button>
+            </div>
           </div>
           <div class="team-bar" id="teamsBar"></div>
         </div>
@@ -805,7 +836,6 @@
       document.getElementById("p2Salary").textContent = p2 ? formatSalary(p2.salary) : "–";
       document.getElementById("p3Salary").textContent = p3 ? formatSalary(p3.salary) : "–";
 
-      // Update active team & re-render tabs
       const team = getActiveTeam();
       if (team) {
         team.cap = cap;
@@ -818,8 +848,26 @@
         renderTeamTabs();
       }
 
-      // Rebuild dropdowns so cap + picks apply to options
       rebuildDropdowns(cap, p1, p2, p3);
+    }
+
+    function deleteActiveTeam() {
+      if (teams.length <= 1) {
+        alert("You need to keep at least one board.");
+        return;
+      }
+      const idx = teams.findIndex((t) => t.id === activeTeamId);
+      if (idx === -1) return;
+
+      const name = teams[idx].name || "this board";
+      if (!confirm(`Delete ${name}?`)) return;
+
+      teams.splice(idx, 1);
+      const newIdx = idx > 0 ? idx - 1 : 0;
+      activeTeamId = teams[newIdx].id;
+      saveTeams();
+      renderTeamTabs();
+      syncUIFromTeam();
     }
 
     function init() {
@@ -850,6 +898,11 @@
           renderTeamTabs();
           syncUIFromTeam();
         });
+      }
+
+      const delBtn = document.getElementById("deleteTeamBtn");
+      if (delBtn) {
+        delBtn.addEventListener("click", deleteActiveTeam);
       }
     }
 

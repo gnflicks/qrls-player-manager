@@ -85,7 +85,7 @@
       justify-content: space-between;
       gap: 1rem;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     h1 {
@@ -197,6 +197,80 @@
       height: 8px;
       border-radius: 999px;
       background: linear-gradient(135deg, var(--orange), var(--blue));
+    }
+
+    /* Draft boards bar */
+    .team-row {
+      margin: 0.75rem 0 1rem;
+    }
+
+    .team-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+    }
+
+    .team-row-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .team-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .team-tab {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(3,7,20,0.9);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 0.2rem 0.7rem;
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .team-tab:hover {
+      border-color: var(--accent);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .team-tab.active {
+      background: linear-gradient(135deg, rgba(255,159,28,0.85), rgba(32,140,255,0.9));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .team-add {
+      background: none;
+      border: 1px dashed rgba(255,255,255,0.35);
+      border-radius: 999px;
+      color: var(--text-muted);
+      padding: 0.15rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .team-add:hover {
+      background: rgba(255,255,255,0.06);
+      border-style: solid;
+      color: var(--text-main);
+      transform: translateY(-1px);
     }
 
     .summary {
@@ -354,7 +428,20 @@
           <img src="qrls-logo.png" alt="QRLS logo" class="logo">
           QRLS Team Builder
         </h1>
+        <div class="pill-row" style="margin-top:0.4rem;">
+          <span class="pill-dot"></span>
+          <span>Build and compare multiple draft boards under a salary cap.</span>
+        </div>
+
+        <div class="team-row">
+          <div class="team-row-header">
+            <span class="team-row-label">Draft boards</span>
+            <button class="team-add" id="addTeamBtn" type="button">+ New</button>
+          </div>
+          <div class="team-bar" id="teamsBar"></div>
+        </div>
       </div>
+
       <div class="field inline">
         <label for="capInput">Cap</label>
         <input type="number" id="capInput" value="600" min="0" step="5" />
@@ -428,8 +515,8 @@
     </table>
 
     <div class="footnote">
-      <span>Cap logic: options shrink as you pick players to only show valid choices.</span>
-      <span>Tip: tweak the cap to test different lineup constraints.</span>
+      <span>Each board remembers its own cap + picks (saved locally).</span>
+      <span>Try creating a few boards for different strategies.</span>
     </div>
   </div>
 
@@ -546,9 +633,13 @@
       { name: "EclypseJade", salary: 75 },
     ];
 
+    const STORAGE_KEY = "qrls_teams_v1";
+    let teams = [];
+    let activeTeamId = null;
+
     function getPlayerByName(name) {
       if (!name) return null;
-      return players.find(p => p.name === name) || null;
+      return players.find((p) => p.name === name) || null;
     }
 
     function formatSalary(x) {
@@ -600,6 +691,83 @@
       buildOptions(s3, allowed3, selected3);
     }
 
+    function createTeam(name) {
+      return {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        name,
+        cap: 600,
+        picks: [null, null, null],
+      };
+    }
+
+    function loadTeams() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.teams) && parsed.teams.length) {
+          teams = parsed.teams;
+          activeTeamId = parsed.activeId || parsed.teams[0].id;
+        }
+      } catch (e) {
+        console.error("Failed to load teams", e);
+      }
+    }
+
+    function saveTeams() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ teams, activeId: activeTeamId })
+        );
+      } catch (e) {
+        console.error("Failed to save teams", e);
+      }
+    }
+
+    function getActiveTeam() {
+      return teams.find((t) => t.id === activeTeamId) || null;
+    }
+
+    function renderTeamTabs() {
+      const bar = document.getElementById("teamsBar");
+      if (!bar) return;
+      bar.innerHTML = "";
+      teams.forEach((t, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "team-tab" + (t.id === activeTeamId ? " active" : "");
+        btn.textContent = t.name || `Board ${idx + 1}`;
+        btn.addEventListener("click", () => {
+          activeTeamId = t.id;
+          saveTeams();
+          renderTeamTabs();
+          syncUIFromTeam();
+        });
+        bar.appendChild(btn);
+      });
+    }
+
+    function syncUIFromTeam() {
+      const team = getActiveTeam();
+      const capInput = document.getElementById("capInput");
+      if (!team || !capInput) return;
+
+      capInput.value = team.cap;
+
+      const p1 = team.picks[0] ? getPlayerByName(team.picks[0]) : null;
+      const p2 = team.picks[1] ? getPlayerByName(team.picks[1]) : null;
+      const p3 = team.picks[2] ? getPlayerByName(team.picks[2]) : null;
+
+      rebuildDropdowns(team.cap, p1, p2, p3);
+
+      document.getElementById("player1").value = team.picks[0] || "";
+      document.getElementById("player2").value = team.picks[1] || "";
+      document.getElementById("player3").value = team.picks[2] || "";
+
+      recompute();
+    }
+
     function recompute() {
       const capInput = document.getElementById("capInput");
       const cap = Number(capInput.value) || 0;
@@ -637,16 +805,52 @@
       document.getElementById("p2Salary").textContent = p2 ? formatSalary(p2.salary) : "–";
       document.getElementById("p3Salary").textContent = p3 ? formatSalary(p3.salary) : "–";
 
+      // Update active team & re-render tabs
+      const team = getActiveTeam();
+      if (team) {
+        team.cap = cap;
+        team.picks = [
+          p1 ? p1.name : null,
+          p2 ? p2.name : null,
+          p3 ? p3.name : null,
+        ];
+        saveTeams();
+        renderTeamTabs();
+      }
+
+      // Rebuild dropdowns so cap + picks apply to options
       rebuildDropdowns(cap, p1, p2, p3);
     }
 
     function init() {
-      const cap = Number(document.getElementById("capInput").value) || 0;
-      rebuildDropdowns(cap, null, null, null);
+      loadTeams();
+      if (!teams.length) {
+        const t = createTeam("Board 1");
+        teams = [t];
+        activeTeamId = t.id;
+        saveTeams();
+      }
+
+      renderTeamTabs();
+      syncUIFromTeam();
+
       document.getElementById("capInput").addEventListener("input", recompute);
       document.getElementById("player1").addEventListener("change", recompute);
       document.getElementById("player2").addEventListener("change", recompute);
       document.getElementById("player3").addEventListener("change", recompute);
+
+      const addBtn = document.getElementById("addTeamBtn");
+      if (addBtn) {
+        addBtn.addEventListener("click", () => {
+          const idx = teams.length + 1;
+          const t = createTeam(`Board ${idx}`);
+          teams.push(t);
+          activeTeamId = t.id;
+          saveTeams();
+          renderTeamTabs();
+          syncUIFromTeam();
+        });
+      }
     }
 
     document.addEventListener("DOMContentLoaded", init);

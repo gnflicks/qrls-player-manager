@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Salary Cap Lineup Builder</title>
+  <style>
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --card-elevated: #141a33;
+      --accent: #4f7dff;
+      --accent-soft: #4f7dff40;
+      --accent-good: #4fd38b;
+      --accent-bad: #ff6b81;
+      --border-subtle: #252b4a;
+      --text-main: #f5f7ff;
+      --text-muted: #a2a8d8;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-strong: 0 18px 45px rgba(0,0,0,0.6);
+      --transition-fast: 150ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 20% -20%, #4f7dff33, transparent 55%),
+        radial-gradient(circle at 80% 120%, #ff6b8140, transparent 55%),
+        linear-gradient(135deg, #050816, #020515);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: radial-gradient(circle at top left, #1b2144 0, #0b1020 55%);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-strong);
+      padding: 1.75rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 100%, #4f7dff11 0, transparent 60%),
+        radial-gradient(circle at 100% 0%, #ff6b8115 0, transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h1 span.icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0%, #ffffffdd, #4f7dff);
+      color: #050816;
+      font-size: 0.9rem;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text-muted);
+      background: linear-gradient(120deg, #11172d, #111528);
+      white-space: nowrap;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: center;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .field.inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    select, input[type="number"] {
+      background: rgba(4,8,24,0.9);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.5rem 0.7rem;
+      min-width: 180px;
+      font-size: 0.95rem;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+      appearance: none;
+    }
+
+    select {
+      padding-right: 2rem;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) calc(50% - 3px),
+        calc(100% - 9px)  calc(50% - 3px);
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+      background: rgba(8,12,32,0.95);
+      transform: translateY(-1px);
+    }
+
+    input[type="number"] {
+      width: 120px;
+      text-align: right;
+    }
+
+    .pill-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(6,10,31,0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .summary-card {
+      background: radial-gradient(circle at top, #182046, #10162b);
+      border-radius: 14px;
+      padding: 0.8rem 0.95rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 70%;
+      height: 150%;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.1), transparent 60%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .summary-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .summary-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .summary-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+
+    .good {
+      color: var(--accent-good);
+    }
+
+    .bad {
+      color: var(--accent-bad);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.6rem;
+      font-size: 0.9rem;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #090d1c;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    thead {
+      background: linear-gradient(120deg, #151b35, #141a33);
+    }
+
+    th, td {
+      padding: 0.55rem 0.7rem;
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr + tr td {
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    tr:nth-child(even) td {
+      background: #0b1020;
+    }
+
+    .salary-col {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .slot-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(79,125,255,0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .footnote {
+      margin-top: 0.9rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .card {
+        padding: 1.4rem 1.25rem 1.6rem;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      select, input[type="number"] {
+        width: 100%;
+      }
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <div>
+        <h1><span class="icon">Σ</span> Salary Cap Lineup Builder</h1>
+        <div class="pill-row" style="margin-top:0.4rem;">
+          <span class="pill-dot"></span>
+        </div>
+      </div>
+      <div class="field inline">
+        <label for="capInput">Cap</label>
+        <input type="number" id="capInput" value="600" min="0" step="5" />
+      </div>
+    </header>
+
+    <div class="row">
+      <div class="field">
+        <label for="player1">Player 1</label>
+        <select id="player1">
+          <option value="">-- Select player --</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="player2">Player 2</label>
+        <select id="player2">
+          <option value="">-- Select player --</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="player3">Player 3</label>
+        <select id="player3">
+          <option value="">-- Select player --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-card">
+        <div class="summary-label">P1 / P2 / P3 Salary</div>
+        <div class="summary-value" id="slotSalaries">– / – / –</div>
+        <div class="summary-sub">Individual salary for each slot.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Total Salary</div>
+        <div class="summary-value" id="totalSalary">0</div>
+        <div class="summary-sub">Sum of all three selected players.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Distance From Cap</div>
+        <div class="summary-value" id="distanceFromCap">0</div>
+        <div class="summary-sub">Green = under cap, red = over.</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Slot</th>
+          <th>Player</th>
+          <th class="salary-col">Salary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="slot-pill">P1</span></td>
+          <td id="p1Name">–</td>
+          <td class="salary-col" id="p1Salary">–</td>
+        </tr>
+        <tr>
+          <td><span class="slot-pill">P2</span></td>
+          <td id="p2Name">–</td>
+          <td class="salary-col" id="p2Salary">–</td>
+        </tr>
+        <tr>
+          <td><span class="slot-pill">P3</span></td>
+          <td id="p3Name">–</td>
+          <td class="salary-col" id="p3Salary">–</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footnote">
+      <span>Cap logic: options shrink as you pick players to only show valid choices.</span>
+      <span>Tip: tweak the cap to test different lineup constraints.</span>
+    </div>
+  </div>
+
+  <script>
+    // TODO: replace this sample list with your full players list (name + salary)
+    const players = [
+  { name: "Alex (SUB)", salary: 300 },
+  { name: "Averded", salary: 300 },
+  { name: "Storm Soku", salary: 300 },
+  { name: "Patty_F5", salary: 290 },
+  { name: "Kyptero", salary: 285 },
+  { name: "reez", salary: 280 },
+  { name: "MassacredTtv", salary: 275 },
+  { name: "Vivo", salary: 275 },
+  { name: "Bubs", salary: 270 },
+  { name: "gnflicks", salary: 270 },
+  { name: "JackFazKnight", salary: 270 },
+  { name: "jayjr.", salary: 270 },
+  { name: "Taz", salary: 270 },
+  { name: "unfunny yummy", salary: 265 },
+  { name: "jjcool878", salary: 260 },
+  { name: "sorry", salary: 260 },
+  { name: "Docta Geowge", salary: 255 },
+  { name: "Niner", salary: 255 },
+  { name: "N.O.R.M.", salary: 250 },
+  { name: "mel", salary: 245 },
+  { name: "Chop jr", salary: 235 },
+  { name: "Deadsinho", salary: 235 },
+  { name: "ExpiredPyro", salary: 235 },
+  { name: "Mimeticz", salary: 230 },
+  { name: "Xireq", salary: 230 },
+  { name: "Insaneclown1077", salary: 220 },
+  { name: "Kuawhii", salary: 220 },
+  { name: "TheeSpaceCase", salary: 220 },
+  { name: "Zeethol", salary: 220 },
+  { name: "boltend", salary: 215 },
+  { name: "Crimson", salary: 215 },
+  { name: "Warshinho", salary: 215 },
+  { name: "BIGbadBULLMAN13", salary: 210 },
+  { name: "Cstreif", salary: 210 },
+  { name: "itsos", salary: 210 },
+  { name: "Judy_Mcb00ty", salary: 210 },
+  { name: "Longneck - Real", salary: 210 },
+  { name: "reservewolf", salary: 210 },
+  { name: "Scanti.", salary: 210 },
+  { name: "sockybo", salary: 210 },
+  { name: "CrocsWithSockz", salary: 205 },
+  { name: "Cubnuts", salary: 205 },
+  { name: "JordanSob", salary: 205 },
+  { name: "Moose", salary: 205 },
+  { name: "Nobody", salary: 205 },
+  { name: "Shadow Dweller", salary: 205 },
+  { name: "Snoozzz", salary: 205 },
+  { name: "Dragony99", salary: 200 },
+  { name: "f150greyhound", salary: 200 },
+  { name: "HeyZuesy", salary: 195 },
+  { name: "TwistyTripod", salary: 195 },
+  { name: "Bitzy", salary: 190 },
+  { name: "CeeJay", salary: 190 },
+  { name: "kachow", salary: 190 },
+  { name: "Not_Sniper.exe", salary: 190 },
+  { name: "BBB_tomzz", salary: 190 },
+  { name: "ZDL Pinky", salary: 190 },
+  { name: "Chawigo", salary: 185 },
+  { name: "Daniel", salary: 185 },
+  { name: "Kento", salary: 185 },
+  { name: "OPS x Shadow", salary: 185 },
+  { name: "SkyDrggn", salary: 185 },
+  { name: "DarkRaine", salary: 180 },
+  { name: "Tre3post", salary: 180 },
+  { name: "W4ffles", salary: 180 },
+  { name: "WontedToast", salary: 180 },
+  { name: "MF RedBeard (SUB)", salary: 175 },
+  { name: "Pr0sp3cttt", salary: 175 },
+  { name: "Scrxpz", salary: 175 },
+  { name: "SnipingXtremist", salary: 175 },
+  { name: "XsNIPER50", salary: 175 },
+  { name: "Dave", salary: 170 },
+  { name: "Fabreasy", salary: 170 },
+  { name: "hardstuck henry", salary: 170 },
+  { name: "MrPenguin_RL", salary: 170 },
+  { name: "Toaster", salary: 170 },
+  { name: "a72temas", salary: 165 },
+  { name: "Golden Pickle", salary: 165 },
+  { name: "Naxxei", salary: 165 },
+  { name: "syrupr", salary: 165 },
+  { name: "CharredTotem", salary: 160 },
+  { name: "Quackz", salary: 160 },
+  { name: "SkaiRippa", salary: 160 },
+  { name: "SquiddieD", salary: 160 },
+  { name: "Blubbernuht", salary: 155 },
+  { name: "Drkmxxn", salary: 155 },
+  { name: "Shrilldevotee45", salary: 155 },
+  { name: "Crez", salary: 150 },
+  { name: "Masamune", salary: 150 },
+  { name: "Mimsy", salary: 150 },
+  { name: "MisterRebel", salary: 150 },
+  { name: "xLIGHTSxOUTx52", salary: 150 },
+  { name: "Puck", salary: 140 },
+  { name: "Rekkaru", salary: 140 },
+  { name: "Joepapa72", salary: 135 },
+  { name: "Sensei_San", salary: 135 },
+  { name: "yuboe", salary: 135 },
+  { name: "0xDocx0", salary: 130 },
+  { name: "Eclipse9028", salary: 130 },
+  { name: "oreo maker", salary: 130 },
+  { name: "Panda240SX (SUB)", salary: 130 },
+  { name: "KhievGaming", salary: 125 },
+  { name: "SirBroDude", salary: 120 },
+  { name: "SkaiDevil", salary: 120 },
+  { name: "Slam James", salary: 120 },
+  { name: "Reverend_RL", salary: 115 },
+  { name: "Angel_bx22", salary: 110 },
+  { name: "Nyxetheron", salary: 100 },
+  { name: "EclypseJade", salary: 75 },
+];
+
+    function getPlayerByName(name) {
+      if (!name) return null;
+      return players.find(p => p.name === name) || null;
+    }
+
+    function formatSalary(x) {
+      if (x === null || x === undefined || isNaN(x)) return "–";
+      return x.toFixed(0);
+    }
+
+    function buildOptions(select, allowed, selectedName) {
+      const prev = selectedName || select.value;
+      select.innerHTML = "";
+      const baseOpt = document.createElement("option");
+      baseOpt.value = "";
+      baseOpt.textContent = "-- Select player --";
+      select.appendChild(baseOpt);
+      allowed.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.name;
+        opt.textContent = `${p.name} (${p.salary.toFixed(0)})`;
+        if (p.name === prev) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function rebuildDropdowns(cap, p1, p2, p3) {
+      const s1 = document.getElementById("player1");
+      const s2 = document.getElementById("player2");
+      const s3 = document.getElementById("player3");
+
+      const selected1 = p1 ? p1.name : "";
+      const selected2 = p2 ? p2.name : "";
+      const selected3 = p3 ? p3.name : "";
+
+      const allowed1 = players.filter(p => p.salary <= cap);
+      buildOptions(s1, allowed1, selected1);
+
+      const remainingCap2 = cap - (p1 ? p1.salary : 0);
+      const allowed2 = players.filter(p =>
+        p.salary <= remainingCap2 &&
+        (!p1 || p.name !== p1.name)
+      );
+      buildOptions(s2, allowed2, selected2);
+
+      const remainingCap3 = cap - (p1 ? p1.salary : 0) - (p2 ? p2.salary : 0);
+      const allowed3 = players.filter(p =>
+        p.salary <= remainingCap3 &&
+        (!p1 || p.name !== p1.name) &&
+        (!p2 || p.name !== p2.name)
+      );
+      buildOptions(s3, allowed3, selected3);
+    }
+
+    function recompute() {
+      const capInput = document.getElementById("capInput");
+      const cap = Number(capInput.value) || 0;
+
+      const s1 = document.getElementById("player1").value;
+      const s2 = document.getElementById("player2").value;
+      const s3 = document.getElementById("player3").value;
+
+      const p1 = getPlayerByName(s1);
+      const p2 = getPlayerByName(s2);
+      const p3 = getPlayerByName(s3);
+
+      const sal1 = p1 ? p1.salary : 0;
+      const sal2 = p2 ? p2.salary : 0;
+      const sal3 = p3 ? p3.salary : 0;
+
+      const total = sal1 + sal2 + sal3;
+      const diff = cap - total;
+
+      document.getElementById("slotSalaries").textContent =
+        `${formatSalary(sal1)} / ${formatSalary(sal2)} / ${formatSalary(sal3)}`;
+      document.getElementById("totalSalary").textContent = formatSalary(total);
+
+      const distanceEl = document.getElementById("distanceFromCap");
+      const distance = Math.abs(diff);
+      distanceEl.textContent = distance.toFixed(0);
+      distanceEl.classList.remove("good", "bad");
+      if (diff >= 0) distanceEl.classList.add("good");
+      else distanceEl.classList.add("bad");
+
+      document.getElementById("p1Name").textContent = p1 ? p1.name : "–";
+      document.getElementById("p2Name").textContent = p2 ? p2.name : "–";
+      document.getElementById("p3Name").textContent = p3 ? p3.name : "–";
+      document.getElementById("p1Salary").textContent = p1 ? formatSalary(p1.salary) : "–";
+      document.getElementById("p2Salary").textContent = p2 ? formatSalary(p2.salary) : "–";
+      document.getElementById("p3Salary").textContent = p3 ? formatSalary(p3.salary) : "–";
+
+      rebuildDropdowns(cap, p1, p2, p3);
+    }
+
+    function init() {
+      const cap = Number(document.getElementById("capInput").value) || 0;
+      rebuildDropdowns(cap, null, null, null);
+      document.getElementById("capInput").addEventListener("input", recompute);
+      document.getElementById("player1").addEventListener("change", recompute);
+      document.getElementById("player2").addEventListener("change", recompute);
+      document.getElementById("player3").addEventListener("change", recompute);
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Salary Cap Lineup Builder</title>
+  <title>QRLS Team Builder</title>
   <style>
     .logo {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  margin-right: 0.6rem;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 0%, #ffffffdd, #4f7dff);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.25),
-              0 8px 18px rgba(0,0,0,0.6);
-}
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      margin-right: 0.6rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0%, #ffffffdd, #4f7dff);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.25),
+                  0 8px 18px rgba(0,0,0,0.6);
+    }
+
     :root {
       --bg: #050816;
       --card-bg: #0b1020;
@@ -91,19 +92,6 @@
       gap: 0.5rem;
     }
 
-    h1 span.icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0%, #ffffffdd, #4f7dff);
-      color: #050816;
-      font-size: 0.9rem;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
-    }
-
     .tag {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -144,15 +132,20 @@
       color: var(--text-muted);
     }
 
-    select, input[type="number"] {
-      background: rgba(4,8,24,0.9);
+    select,
+    input[type="number"] {
+      background: rgba(4, 8, 24, 0.9);
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
       padding: 0.5rem 0.7rem;
       min-width: 180px;
       font-size: 0.95rem;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        transform var(--transition-fast);
       appearance: none;
     }
 
@@ -163,16 +156,17 @@
         linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
       background-position:
         calc(100% - 14px) calc(50% - 3px),
-        calc(100% - 9px)  calc(50% - 3px);
+        calc(100% - 9px) calc(50% - 3px);
       background-size: 6px 6px;
       background-repeat: no-repeat;
     }
 
-    select:focus, input[type="number"]:focus {
+    select:focus,
+    input[type="number"]:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent-soft);
-      background: rgba(8,12,32,0.95);
+      background: rgba(8, 12, 32, 0.95);
       transform: translateY(-1px);
     }
 
@@ -187,8 +181,8 @@
       gap: 0.35rem;
       padding: 0.35rem 0.6rem;
       border-radius: 999px;
-      background: rgba(6,10,31,0.9);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(6, 10, 31, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       font-size: 0.75rem;
       color: var(--text-muted);
     }
@@ -211,7 +205,7 @@
       background: radial-gradient(circle at top, #182046, #10162b);
       border-radius: 14px;
       padding: 0.8rem 0.95rem;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       position: relative;
       overflow: hidden;
     }
@@ -223,7 +217,7 @@
       right: -20%;
       width: 70%;
       height: 150%;
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.1), transparent 60%);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1), transparent 60%);
       opacity: 0.4;
       pointer-events: none;
     }
@@ -263,14 +257,15 @@
       border-radius: 12px;
       overflow: hidden;
       background: #090d1c;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     thead {
       background: linear-gradient(120deg, #151b35, #141a33);
     }
 
-    th, td {
+    th,
+    td {
       padding: 0.55rem 0.7rem;
       text-align: left;
     }
@@ -284,7 +279,7 @@
     }
 
     tr + tr td {
-      border-top: 1px solid rgba(255,255,255,0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     tr:nth-child(even) td {
@@ -303,7 +298,7 @@
       min-width: 28px;
       height: 22px;
       border-radius: 999px;
-      background: rgba(79,125,255,0.12);
+      background: rgba(79, 125, 255, 0.12);
       color: var(--accent);
       font-size: 0.75rem;
       font-weight: 500;
@@ -333,7 +328,8 @@
         flex-direction: column;
         align-items: stretch;
       }
-      select, input[type="number"] {
+      select,
+      input[type="number"] {
         width: 100%;
       }
       .summary {
@@ -347,11 +343,12 @@
     <header>
       <div>
         <h1>
-  <img src="qrls-logo.png" alt="QRLS logo" class="logo">
-  QRLS Team Builder
-</h1>
+          <img src="qrls-logo.png" alt="QRLS logo" class="logo">
+          QRLS Team Builder
+        </h1>
         <div class="pill-row" style="margin-top:0.4rem;">
           <span class="pill-dot"></span>
+          <span>Pick 3 players under your chosen salary cap.</span>
         </div>
       </div>
       <div class="field inline">
@@ -433,118 +430,117 @@
   </div>
 
   <script>
-    // TODO: replace this sample list with your full players list (name + salary)
     const players = [
-  { name: "Alex (SUB)", salary: 300 },
-  { name: "Averded", salary: 300 },
-  { name: "Storm Soku", salary: 300 },
-  { name: "Patty_F5", salary: 290 },
-  { name: "Kyptero", salary: 285 },
-  { name: "reez", salary: 280 },
-  { name: "MassacredTtv", salary: 275 },
-  { name: "Vivo", salary: 275 },
-  { name: "Bubs", salary: 270 },
-  { name: "gnflicks", salary: 270 },
-  { name: "JackFazKnight", salary: 270 },
-  { name: "jayjr.", salary: 270 },
-  { name: "Taz", salary: 270 },
-  { name: "unfunny yummy", salary: 265 },
-  { name: "jjcool878", salary: 260 },
-  { name: "sorry", salary: 260 },
-  { name: "Docta Geowge", salary: 255 },
-  { name: "Niner", salary: 255 },
-  { name: "N.O.R.M.", salary: 250 },
-  { name: "mel", salary: 245 },
-  { name: "Chop jr", salary: 235 },
-  { name: "Deadsinho", salary: 235 },
-  { name: "ExpiredPyro", salary: 235 },
-  { name: "Mimeticz", salary: 230 },
-  { name: "Xireq", salary: 230 },
-  { name: "Insaneclown1077", salary: 220 },
-  { name: "Kuawhii", salary: 220 },
-  { name: "TheeSpaceCase", salary: 220 },
-  { name: "Zeethol", salary: 220 },
-  { name: "boltend", salary: 215 },
-  { name: "Crimson", salary: 215 },
-  { name: "Warshinho", salary: 215 },
-  { name: "BIGbadBULLMAN13", salary: 210 },
-  { name: "Cstreif", salary: 210 },
-  { name: "itsos", salary: 210 },
-  { name: "Judy_Mcb00ty", salary: 210 },
-  { name: "Longneck - Real", salary: 210 },
-  { name: "reservewolf", salary: 210 },
-  { name: "Scanti.", salary: 210 },
-  { name: "sockybo", salary: 210 },
-  { name: "CrocsWithSockz", salary: 205 },
-  { name: "Cubnuts", salary: 205 },
-  { name: "JordanSob", salary: 205 },
-  { name: "Moose", salary: 205 },
-  { name: "Nobody", salary: 205 },
-  { name: "Shadow Dweller", salary: 205 },
-  { name: "Snoozzz", salary: 205 },
-  { name: "Dragony99", salary: 200 },
-  { name: "f150greyhound", salary: 200 },
-  { name: "HeyZuesy", salary: 195 },
-  { name: "TwistyTripod", salary: 195 },
-  { name: "Bitzy", salary: 190 },
-  { name: "CeeJay", salary: 190 },
-  { name: "kachow", salary: 190 },
-  { name: "Not_Sniper.exe", salary: 190 },
-  { name: "BBB_tomzz", salary: 190 },
-  { name: "ZDL Pinky", salary: 190 },
-  { name: "Chawigo", salary: 185 },
-  { name: "Daniel", salary: 185 },
-  { name: "Kento", salary: 185 },
-  { name: "OPS x Shadow", salary: 185 },
-  { name: "SkyDrggn", salary: 185 },
-  { name: "DarkRaine", salary: 180 },
-  { name: "Tre3post", salary: 180 },
-  { name: "W4ffles", salary: 180 },
-  { name: "WontedToast", salary: 180 },
-  { name: "MF RedBeard (SUB)", salary: 175 },
-  { name: "Pr0sp3cttt", salary: 175 },
-  { name: "Scrxpz", salary: 175 },
-  { name: "SnipingXtremist", salary: 175 },
-  { name: "XsNIPER50", salary: 175 },
-  { name: "Dave", salary: 170 },
-  { name: "Fabreasy", salary: 170 },
-  { name: "hardstuck henry", salary: 170 },
-  { name: "MrPenguin_RL", salary: 170 },
-  { name: "Toaster", salary: 170 },
-  { name: "a72temas", salary: 165 },
-  { name: "Golden Pickle", salary: 165 },
-  { name: "Naxxei", salary: 165 },
-  { name: "syrupr", salary: 165 },
-  { name: "CharredTotem", salary: 160 },
-  { name: "Quackz", salary: 160 },
-  { name: "SkaiRippa", salary: 160 },
-  { name: "SquiddieD", salary: 160 },
-  { name: "Blubbernuht", salary: 155 },
-  { name: "Drkmxxn", salary: 155 },
-  { name: "Shrilldevotee45", salary: 155 },
-  { name: "Crez", salary: 150 },
-  { name: "Masamune", salary: 150 },
-  { name: "Mimsy", salary: 150 },
-  { name: "MisterRebel", salary: 150 },
-  { name: "xLIGHTSxOUTx52", salary: 150 },
-  { name: "Puck", salary: 140 },
-  { name: "Rekkaru", salary: 140 },
-  { name: "Joepapa72", salary: 135 },
-  { name: "Sensei_San", salary: 135 },
-  { name: "yuboe", salary: 135 },
-  { name: "0xDocx0", salary: 130 },
-  { name: "Eclipse9028", salary: 130 },
-  { name: "oreo maker", salary: 130 },
-  { name: "Panda240SX (SUB)", salary: 130 },
-  { name: "KhievGaming", salary: 125 },
-  { name: "SirBroDude", salary: 120 },
-  { name: "SkaiDevil", salary: 120 },
-  { name: "Slam James", salary: 120 },
-  { name: "Reverend_RL", salary: 115 },
-  { name: "Angel_bx22", salary: 110 },
-  { name: "Nyxetheron", salary: 100 },
-  { name: "EclypseJade", salary: 75 },
-];
+      { name: "Alex (SUB)", salary: 300 },
+      { name: "Averded", salary: 300 },
+      { name: "Storm Soku", salary: 300 },
+      { name: "Patty_F5", salary: 290 },
+      { name: "Kyptero", salary: 285 },
+      { name: "reez", salary: 280 },
+      { name: "MassacredTtv", salary: 275 },
+      { name: "Vivo", salary: 275 },
+      { name: "Bubs", salary: 270 },
+      { name: "gnflicks", salary: 270 },
+      { name: "JackFazKnight", salary: 270 },
+      { name: "jayjr.", salary: 270 },
+      { name: "Taz", salary: 270 },
+      { name: "unfunny yummy", salary: 265 },
+      { name: "jjcool878", salary: 260 },
+      { name: "sorry", salary: 260 },
+      { name: "Docta Geowge", salary: 255 },
+      { name: "Niner", salary: 255 },
+      { name: "N.O.R.M.", salary: 250 },
+      { name: "mel", salary: 245 },
+      { name: "Chop jr", salary: 235 },
+      { name: "Deadsinho", salary: 235 },
+      { name: "ExpiredPyro", salary: 235 },
+      { name: "Mimeticz", salary: 230 },
+      { name: "Xireq", salary: 230 },
+      { name: "Insaneclown1077", salary: 220 },
+      { name: "Kuawhii", salary: 220 },
+      { name: "TheeSpaceCase", salary: 220 },
+      { name: "Zeethol", salary: 220 },
+      { name: "boltend", salary: 215 },
+      { name: "Crimson", salary: 215 },
+      { name: "Warshinho", salary: 215 },
+      { name: "BIGbadBULLMAN13", salary: 210 },
+      { name: "Cstreif", salary: 210 },
+      { name: "itsos", salary: 210 },
+      { name: "Judy_Mcb00ty", salary: 210 },
+      { name: "Longneck - Real", salary: 210 },
+      { name: "reservewolf", salary: 210 },
+      { name: "Scanti.", salary: 210 },
+      { name: "sockybo", salary: 210 },
+      { name: "CrocsWithSockz", salary: 205 },
+      { name: "Cubnuts", salary: 205 },
+      { name: "JordanSob", salary: 205 },
+      { name: "Moose", salary: 205 },
+      { name: "Nobody", salary: 205 },
+      { name: "Shadow Dweller", salary: 205 },
+      { name: "Snoozzz", salary: 205 },
+      { name: "Dragony99", salary: 200 },
+      { name: "f150greyhound", salary: 200 },
+      { name: "HeyZuesy", salary: 195 },
+      { name: "TwistyTripod", salary: 195 },
+      { name: "Bitzy", salary: 190 },
+      { name: "CeeJay", salary: 190 },
+      { name: "kachow", salary: 190 },
+      { name: "Not_Sniper.exe", salary: 190 },
+      { name: "BBB_tomzz", salary: 190 },
+      { name: "ZDL Pinky", salary: 190 },
+      { name: "Chawigo", salary: 185 },
+      { name: "Daniel", salary: 185 },
+      { name: "Kento", salary: 185 },
+      { name: "OPS x Shadow", salary: 185 },
+      { name: "SkyDrggn", salary: 185 },
+      { name: "DarkRaine", salary: 180 },
+      { name: "Tre3post", salary: 180 },
+      { name: "W4ffles", salary: 180 },
+      { name: "WontedToast", salary: 180 },
+      { name: "MF RedBeard (SUB)", salary: 175 },
+      { name: "Pr0sp3cttt", salary: 175 },
+      { name: "Scrxpz", salary: 175 },
+      { name: "SnipingXtremist", salary: 175 },
+      { name: "XsNIPER50", salary: 175 },
+      { name: "Dave", salary: 170 },
+      { name: "Fabreasy", salary: 170 },
+      { name: "hardstuck henry", salary: 170 },
+      { name: "MrPenguin_RL", salary: 170 },
+      { name: "Toaster", salary: 170 },
+      { name: "a72temas", salary: 165 },
+      { name: "Golden Pickle", salary: 165 },
+      { name: "Naxxei", salary: 165 },
+      { name: "syrupr", salary: 165 },
+      { name: "CharredTotem", salary: 160 },
+      { name: "Quackz", salary: 160 },
+      { name: "SkaiRippa", salary: 160 },
+      { name: "SquiddieD", salary: 160 },
+      { name: "Blubbernuht", salary: 155 },
+      { name: "Drkmxxn", salary: 155 },
+      { name: "Shrilldevotee45", salary: 155 },
+      { name: "Crez", salary: 150 },
+      { name: "Masamune", salary: 150 },
+      { name: "Mimsy", salary: 150 },
+      { name: "MisterRebel", salary: 150 },
+      { name: "xLIGHTSxOUTx52", salary: 150 },
+      { name: "Puck", salary: 140 },
+      { name: "Rekkaru", salary: 140 },
+      { name: "Joepapa72", salary: 135 },
+      { name: "Sensei_San", salary: 135 },
+      { name: "yuboe", salary: 135 },
+      { name: "0xDocx0", salary: 130 },
+      { name: "Eclipse9028", salary: 130 },
+      { name: "oreo maker", salary: 130 },
+      { name: "Panda240SX (SUB)", salary: 130 },
+      { name: "KhievGaming", salary: 125 },
+      { name: "SirBroDude", salary: 120 },
+      { name: "SkaiDevil", salary: 120 },
+      { name: "Slam James", salary: 120 },
+      { name: "Reverend_RL", salary: 115 },
+      { name: "Angel_bx22", salary: 110 },
+      { name: "Nyxetheron", salary: 100 },
+      { name: "EclypseJade", salary: 75 },
+    ];
 
     function getPlayerByName(name) {
       if (!name) return null;
@@ -563,7 +559,7 @@
       baseOpt.value = "";
       baseOpt.textContent = "-- Select player --";
       select.appendChild(baseOpt);
-      allowed.forEach(p => {
+      allowed.forEach((p) => {
         const opt = document.createElement("option");
         opt.value = p.name;
         opt.textContent = `${p.name} (${p.salary.toFixed(0)})`;
@@ -581,21 +577,21 @@
       const selected2 = p2 ? p2.name : "";
       const selected3 = p3 ? p3.name : "";
 
-      const allowed1 = players.filter(p => p.salary <= cap);
+      const allowed1 = players.filter((p) => p.salary <= cap);
       buildOptions(s1, allowed1, selected1);
 
       const remainingCap2 = cap - (p1 ? p1.salary : 0);
-      const allowed2 = players.filter(p =>
-        p.salary <= remainingCap2 &&
-        (!p1 || p.name !== p1.name)
+      const allowed2 = players.filter(
+        (p) => p.salary <= remainingCap2 && (!p1 || p.name !== p1.name)
       );
       buildOptions(s2, allowed2, selected2);
 
       const remainingCap3 = cap - (p1 ? p1.salary : 0) - (p2 ? p2.salary : 0);
-      const allowed3 = players.filter(p =>
-        p.salary <= remainingCap3 &&
-        (!p1 || p.name !== p1.name) &&
-        (!p2 || p.name !== p2.name)
+      const allowed3 = players.filter(
+        (p) =>
+          p.salary <= remainingCap3 &&
+          (!p1 || p.name !== p1.name) &&
+          (!p2 || p.name !== p2.name)
       );
       buildOptions(s3, allowed3, selected3);
     }

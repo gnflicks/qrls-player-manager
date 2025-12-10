@@ -547,7 +547,7 @@
 
     <div class="footnote">
       <span>Each board remembers its own cap + picks (saved locally).</span>
-      <span>Try creating a few boards for different strategies.</span>
+      <span>League rule: at most one player over 230 per roster.</span>
     </div>
   </div>
 
@@ -678,6 +678,10 @@
       return x.toFixed(0);
     }
 
+    function isHighSalary(p) {
+      return p && p.salary > 230;
+    }
+
     function buildOptions(select, allowed, selectedName) {
       const prev = selectedName || select.value;
       select.innerHTML = "";
@@ -694,6 +698,10 @@
       });
     }
 
+    // Enforce:
+    //  - cap
+    //  - no duplicate players
+    //  - at most ONE player with salary > 230 on a roster
     function rebuildDropdowns(cap, p1, p2, p3) {
       const s1 = document.getElementById("player1");
       const s2 = document.getElementById("player2");
@@ -703,22 +711,32 @@
       const selected2 = p2 ? p2.name : "";
       const selected3 = p3 ? p3.name : "";
 
-      const allowed1 = players.filter((p) => p.salary <= cap);
+      function allowedForSlot(other1, other2) {
+        const otherSal = (other1 ? other1.salary : 0) + (other2 ? other2.salary : 0);
+        const highCountOthers =
+          (isHighSalary(other1) ? 1 : 0) + (isHighSalary(other2) ? 1 : 0);
+
+        return players.filter((p) => {
+          // Must fit under cap
+          if (p.salary + otherSal > cap) return false;
+
+          // League rule: at most one player > 230
+          if (p.salary > 230 && highCountOthers >= 1) return false;
+
+          // Cannot duplicate other picks
+          if (other1 && p.name === other1.name) return false;
+          if (other2 && p.name === other2.name) return false;
+
+          return true;
+        });
+      }
+
+      const allowed1 = allowedForSlot(p2, p3);
+      const allowed2 = allowedForSlot(p1, p3);
+      const allowed3 = allowedForSlot(p1, p2);
+
       buildOptions(s1, allowed1, selected1);
-
-      const remainingCap2 = cap - (p1 ? p1.salary : 0);
-      const allowed2 = players.filter(
-        (p) => p.salary <= remainingCap2 && (!p1 || p.name !== p1.name)
-      );
       buildOptions(s2, allowed2, selected2);
-
-      const remainingCap3 = cap - (p1 ? p1.salary : 0) - (p2 ? p2.salary : 0);
-      const allowed3 = players.filter(
-        (p) =>
-          p.salary <= remainingCap3 &&
-          (!p1 || p.name !== p1.name) &&
-          (!p2 || p.name !== p2.name)
-      );
       buildOptions(s3, allowed3, selected3);
     }
 

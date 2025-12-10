@@ -547,7 +547,7 @@
 
     <div class="footnote">
       <span>Each board remembers its own cap + picks (saved locally).</span>
-      <span>League rule: at most one player over 230 per roster.</span>
+      <span>League rule: at most one player with salary 230 or above per roster.</span>
     </div>
   </div>
 
@@ -679,7 +679,7 @@
     }
 
     function isHighSalary(p) {
-      return p && p.salary > 225;
+      return p && p.salary >= 230;
     }
 
     function buildOptions(select, allowed, selectedName) {
@@ -701,7 +701,7 @@
     // Enforce:
     //  - cap
     //  - no duplicate players
-    //  - at most ONE player with salary > 230 on a roster
+    //  - at most ONE player with salary >= 230 on a roster
     function rebuildDropdowns(cap, p1, p2, p3) {
       const s1 = document.getElementById("player1");
       const s2 = document.getElementById("player2");
@@ -720,8 +720,8 @@
           // Must fit under cap
           if (p.salary + otherSal > cap) return false;
 
-          // League rule: at most one player > 230
-          if (p.salary > 230 && highCountOthers >= 1) return false;
+          // League rule: at most one player >= 230
+          if (p.salary >= 230 && highCountOthers >= 1) return false;
 
           // Cannot duplicate other picks
           if (other1 && p.name === other1.name) return false;
